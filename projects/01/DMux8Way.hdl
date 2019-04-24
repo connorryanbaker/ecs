@@ -7,7 +7,11 @@
  * 8-way demultiplexor:
  * {a, b, c, d, e, f, g, h} = {in, 0, 0, 0, 0, 0, 0, 0} if sel == 000
  *                            {0, in, 0, 0, 0, 0, 0, 0} if sel == 001
- *                            etc.
+ * 010
+ * 011
+ * 100
+ * 101
+ * 110                            
  *                            {0, 0, 0, 0, 0, 0, 0, in} if sel == 111
  */
 
@@ -16,5 +20,24 @@ CHIP DMux8Way {
     OUT a, b, c, d, e, f, g, h;
 
     PARTS:
-    // Put your code here:
+    DMux(in=in,sel=sel[0],a=outa,b=outb);
+    DMux(in=in,sel=sel[0],a=outc,b=outd);
+    DMux(in=in,sel=sel[0],a=oute,b=outf);
+    DMux(in=in,sel=sel[0],a=outg,b=outh);
+    Nand(a=sel[1],b=sel[1],out=nand1);
+    Nand(a=sel[2],b=sel[2],out=nand2);
+    And(a=nand1,b=nand2,out=n12);
+    And(a=n12,b=outa,out=a);
+    And(a=n12,b=outb,out=b);
+    Nand(a=sel[2],b=sel[2],out=n2);
+    And(a=n2,b=sel[1],out=cdout);
+    And(a=cdout,b=outc,out=c);
+    And(a=cdout,b=outd,out=d);    
+    Nand(a=sel[1],b=sel[1],out=efnand);
+    And(a=efnand,b=sel[2],out=efout);
+    And(a=efout,b=oute,out=e);
+    And(a=efout,b=outf,out=f);
+    And(a=sel[2],b=sel[1],out=ghout);
+    And(a=ghout,b=outg,out=g);
+    And(a=ghout,b=outh,out=h);
 }
