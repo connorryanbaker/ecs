@@ -42,5 +42,13 @@ CHIP ALU {
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-   // Put you code here:
+        Nand(a=zx,b=zx,out=nandzx);
+        And16(a=x[16],b=nandzx,out=zerox);
+        And(a=nx,b=nx,out=nandnx);
+        Xor16(a=zerox,b=nandnx,out=negx);
+        Nand(a=zy,b=zy,out=nandzy);
+        And16(a=y[16],b=nandzy,out=zeroy);
+        And(a=ny,b=ny,out=nandny);
+        Xor16(a=zeroy,b=nandny,out=negy);
+        
 }
