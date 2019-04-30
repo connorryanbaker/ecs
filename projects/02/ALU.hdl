@@ -50,5 +50,10 @@ CHIP ALU {
         And16(a=y[16],b=nandzy,out=zeroy);
         And(a=ny,b=ny,out=nandny);
         Xor16(a=zeroy,b=nandny,out=negy);
-        
+        And16(a=negx,b=negy,out=andxy);
+        Add16(a=negx,b=negy,out=addxy);
+        Mux16(a=andxy,b=addxy,sel=f,out=preout);
+        Not16(in=preout,out=nout);
+        Mux16(a=preout,b=nout,self=no,out=out);
+       
 }
