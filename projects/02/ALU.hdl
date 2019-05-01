@@ -42,18 +42,26 @@ CHIP ALU {
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-        Nand(a=zx,b=zx,out=nandzx);
-        And16(a=x[16],b=nandzx,out=zerox);
-        And(a=nx,b=nx,out=nandnx);
-        Xor16(a=zerox,b=nandnx,out=negx);
-        Nand(a=zy,b=zy,out=nandzy);
-        And16(a=y[16],b=nandzy,out=zeroy);
-        And(a=ny,b=ny,out=nandny);
-        Xor16(a=zeroy,b=nandny,out=negy);
+        Mux16(a=x,b=false,sel=zx,out=zerox);
+        Not16(in=zerox,out=notx);
+        Mux16(a=zerox,b=notx,sel=nx,out=negx);
+
+
+        Mux16(a=y,b=false,sel=zy,out=zeroy);
+        Not16(in=zeroy,out=noty);
+        Mux16(a=zeroy,b=noty,sel=ny,out=negy);
+
+
         And16(a=negx,b=negy,out=andxy);
         Add16(a=negx,b=negy,out=addxy);
         Mux16(a=andxy,b=addxy,sel=f,out=preout);
         Not16(in=preout,out=nout);
-        Mux16(a=preout,b=nout,self=no,out=out);
-       
+        Mux16(a=preout,b=nout,sel=no,out=out,out[0..7]=zout1,out[8..15]=zout2,out[15]=ng);
+        
+        Or8Way(in=zout1,out=zr1);
+        Or8Way(in=zout2,out=zr2);
+        Or(a=zr1,b=zr2,out=zr3);
+      
+        Not(in=zr3, out=zr);
+        
 }
