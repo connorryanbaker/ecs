@@ -15,34 +15,104 @@ CHIP RAM8 {
     OUT out[16];
 
     PARTS:
-    Eq3(a=address,b=[false,false,false],out=load0);
-    Eq3(a=address,b=[false,false,true],out=load1);
-    Eq3(a=address,b=[false,true,false],out=load2);
-    Eq3(a=address,b=[false,true,true],out=load3);
-    Eq3(a=address,b=[true,false,false],out=load4);
-    Eq3(a=address,b=[true,false,true],out=load5);
-    Eq3(a=address,b=[true,true,false],out=load6);
-    Eq3(a=address,b=[true,true,true],out=load7);
-    Register(in=in,load=load0,out=out0);
-    Register(in=in,load=load1,out=out1);
-    Register(in=in,load=load2,out=out2);
-    Register(in=in,load=load3,out=out3);
-    Register(in=in,load=load4,out=out4);
-    Register(in=in,load=load5,out=out5);
-    Register(in=in,load=load6,out=out6);
-    Register(in=in,load=load7,out=out7);
+    /* a load */
+    Xor(a=address[2], b=false, out=aout0);
+    Xor(a=address[1], b=false, out=aout1);
+    Xor(a=address[0], b=false, out=aout2);
+    Not(in=aout0,out=naout0);
+    Not(in=aout1,out=naout1);
+    Not(in=aout2,out=naout2);
+    And(a=naout0, b=naout1, out=naout3);
+    And(a=naout2,b=naout3,out=sela);
+    And(a=sela,b=load,out=loada);
+
+    /* b load */
+    Xor(a=address[2], b=false, out=bout0);
+    Xor(a=address[1], b=false, out=bout1);
+    Xor(a=address[0], b=true, out=bout2);
+    Not(in=bout0,out=nbout0);
+    Not(in=bout1,out=nbout1);
+    Not(in=bout2,out=nbout2);
+    And(a=nbout0, b=nbout1, out=nbout3);
+    And(a=nbout2,b=nbout3,out=selb);
+    And(a=selb,b=load,out=loadb);
+
+    /* c load */
+    Xor(a=address[2], b=false, out=cout0);
+    Xor(a=address[1], b=true, out=cout1);
+    Xor(a=address[0], b=false, out=cout2);
+    Not(in=cout0,out=ncout0);
+    Not(in=cout1,out=ncout1);
+    Not(in=cout2,out=ncout2);
+    And(a=ncout0, b=ncout1, out=ncout3);
+    And(a=ncout2,b=ncout3,out=selc);
+    And(a=selc,b=load,out=loadc);
+
+    /* d load */
+    Xor(a=address[2], b=false, out=dout0);
+    Xor(a=address[1], b=true, out=dout1);
+    Xor(a=address[0], b=true, out=dout2);
+    Not(in=dout0,out=ndout0);
+    Not(in=dout1,out=ndout1);
+    Not(in=dout2,out=ndout2);
+    And(a=ndout0, b=ndout1, out=ndout3);
+    And(a=ndout2,b=ndout3,out=seld);
+    And(a=seld,b=load,out=loadd);
+    
+    /* e load */
+    Xor(a=address[2], b=true, out=eout0);
+    Xor(a=address[1], b=false, out=eout1);
+    Xor(a=address[0], b=false, out=eout2);
+    Not(in=eout0,out=neout0);
+    Not(in=eout1,out=neout1);
+    Not(in=eout2,out=neout2);
+    And(a=neout0, b=neout1, out=neout3);
+    And(a=neout2,b=neout3,out=sele);
+    And(a=sele,b=load,out=loade);
+
+    /* f load */
+    Xor(a=address[2], b=true, out=fout0);
+    Xor(a=address[1], b=false, out=fout1);
+    Xor(a=address[0], b=true, out=fout2);
+    Not(in=fout0,out=nfout0);
+    Not(in=fout1,out=nfout1);
+    Not(in=fout2,out=nfout2);
+    And(a=nfout0, b=nfout1, out=nfout3);
+    And(a=nfout2,b=nfout3,out=self);
+    And(a=self,b=load,out=loadf);
+
+    /* g load */
+    Xor(a=address[2], b=true, out=gout0);
+    Xor(a=address[1], b=true, out=gout1);
+    Xor(a=address[0], b=false, out=gout2);
+    Not(in=gout0,out=ngout0);
+    Not(in=gout1,out=ngout1);
+    Not(in=gout2,out=ngout2);
+    And(a=ngout0, b=ngout1, out=ngout3);
+    And(a=ngout2,b=ngout3,out=selg);
+    And(a=selg,b=load,out=loadg);
+
+    /* h load */
+    Xor(a=address[2], b=true, out=hout0);
+    Xor(a=address[1], b=true, out=hout1);
+    Xor(a=address[0], b=true, out=hout2);
+    Not(in=hout0,out=nhout0);
+    Not(in=hout1,out=nhout1);
+    Not(in=hout2,out=nhout2);
+    And(a=nhout0, b=nhout1, out=nhout3);
+    And(a=nhout2,b=nhout3,out=selh);
+    And(a=selh,b=load,out=loadh);
+   
+    
+    Register(in=in,load=loada,out=out0);
+    Register(in=in,load=loadb,out=out1);
+    Register(in=in,load=loadc,out=out2);
+    Register(in=in,load=loadd,out=out3);
+    Register(in=in,load=loade,out=out4);
+    Register(in=in,load=loadf,out=out5);
+    Register(in=in,load=loadg,out=out6);
+    Register(in=in,load=loadh,out=out7);
     Mux8Way16(a=out0,b=out1,c=out2,d=out3,
               e=out4,f=out5,g=out6,h=out7,sel=address,out=out);
 }
 
-CHIP Eq3 {
-    IN a[3], b[3];
-    OUT out;
-
-    PARTS:
-    Xor(a=a[0], b=b[0], out=out0);
-    Xor(a=a[1], b=b[1], out=out1);
-    Xor(a=a[2], b=b[2], out=out2);
-    Or(a=Not(out0), b=Not(out1), out=out3);
-    Or(a=out2,b=out3,out=out);
-}
