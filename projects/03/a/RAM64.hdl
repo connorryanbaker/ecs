@@ -8,6 +8,7 @@
  * stored at the memory location specified by address. If load==1, then 
  * the in value is loaded into the memory location specified by address 
  * (the loaded value will be emitted to out from the next time step onward).
+ * MSB (address[3..5]) selects one of the chips, LSB (address[0..2]) selects one of the registers
  */
 
 CHIP RAM64 {
@@ -16,4 +17,101 @@ CHIP RAM64 {
 
     PARTS:
     // Put your code here:
+    /* a load */
+    Xor(a=address[5], b=false, out=aout0);
+    Xor(a=address[4], b=false, out=aout1);
+    Xor(a=address[3], b=false, out=aout2);
+    Not(in=aout0,out=naout0);
+    Not(in=aout1,out=naout1);
+    Not(in=aout2,out=naout2);
+    And(a=naout0, b=naout1, out=naout3);
+    And(a=naout2,b=naout3,out=sela);
+    And(a=sela,b=load,out=loada);
+
+    /* b load */
+    Xor(a=address[5], b=false, out=bout0);
+    Xor(a=address[4], b=false, out=bout1);
+    Xor(a=address[3], b=true, out=bout2);
+    Not(in=bout0,out=nbout0);
+    Not(in=bout1,out=nbout1);
+    Not(in=bout2,out=nbout2);
+    And(a=nbout0, b=nbout1, out=nbout3);
+    And(a=nbout2,b=nbout3,out=selb);
+    And(a=selb,b=load,out=loadb);
+
+    /* c load */
+    Xor(a=address[5], b=false, out=cout0);
+    Xor(a=address[4], b=true, out=cout1);
+    Xor(a=address[3], b=false, out=cout2);
+    Not(in=cout0,out=ncout0);
+    Not(in=cout1,out=ncout1);
+    Not(in=cout2,out=ncout2);
+    And(a=ncout0, b=ncout1, out=ncout3);
+    And(a=ncout2,b=ncout3,out=selc);
+    And(a=selc,b=load,out=loadc);
+
+    /* d load */
+    Xor(a=address[5], b=false, out=dout0);
+    Xor(a=address[4], b=true, out=dout1);
+    Xor(a=address[3], b=true, out=dout2);
+    Not(in=dout0,out=ndout0);
+    Not(in=dout1,out=ndout1);
+    Not(in=dout2,out=ndout2);
+    And(a=ndout0, b=ndout1, out=ndout3);
+    And(a=ndout2,b=ndout3,out=seld);
+    And(a=seld,b=load,out=loadd);
+    
+    /* e load */
+    Xor(a=address[5], b=true, out=eout0);
+    Xor(a=address[4], b=false, out=eout1);
+    Xor(a=address[3], b=false, out=eout2);
+    Not(in=eout0,out=neout0);
+    Not(in=eout1,out=neout1);
+    Not(in=eout2,out=neout2);
+    And(a=neout0, b=neout1, out=neout3);
+    And(a=neout2,b=neout3,out=sele);
+    And(a=sele,b=load,out=loade);
+
+    /* f load */
+    Xor(a=address[5], b=true, out=fout0);
+    Xor(a=address[4], b=false, out=fout1);
+    Xor(a=address[3], b=true, out=fout2);
+    Not(in=fout0,out=nfout0);
+    Not(in=fout1,out=nfout1);
+    Not(in=fout2,out=nfout2);
+    And(a=nfout0, b=nfout1, out=nfout3);
+    And(a=nfout2,b=nfout3,out=self);
+    And(a=self,b=load,out=loadf);
+
+    /* g load */
+    Xor(a=address[5], b=true, out=gout0);
+    Xor(a=address[4], b=true, out=gout1);
+    Xor(a=address[3], b=false, out=gout2);
+    Not(in=gout0,out=ngout0);
+    Not(in=gout1,out=ngout1);
+    Not(in=gout2,out=ngout2);
+    And(a=ngout0, b=ngout1, out=ngout3);
+    And(a=ngout2,b=ngout3,out=selg);
+    And(a=selg,b=load,out=loadg);
+
+    /* h load */
+    Xor(a=address[5], b=true, out=hout0);
+    Xor(a=address[4], b=true, out=hout1);
+    Xor(a=address[3], b=true, out=hout2);
+    Not(in=hout0,out=nhout0);
+    Not(in=hout1,out=nhout1);
+    Not(in=hout2,out=nhout2);
+    And(a=nhout0, b=nhout1, out=nhout3);
+    And(a=nhout2,b=nhout3,out=selh);
+    And(a=selh,b=load,out=loadh);
+    
+    RAM8(in=in,load=loada,address=address[0..2],out=outa);
+    RAM8(in=in,load=loadb,address=address[0..2],out=outb);
+    RAM8(in=in,load=loadc,address=address[0..2],out=outc);
+    RAM8(in=in,load=loadd,address=address[0..2],out=outd);
+    RAM8(in=in,load=loade,address=address[0..2],out=oute);
+    RAM8(in=in,load=loadf,address=address[0..2],out=outf);
+    RAM8(in=in,load=loadg,address=address[0..2],out=outg);
+    RAM8(in=in,load=loadh,address=address[0..2],out=outh);
+    Mux8Way16(a=outa,b=outb,c=outc,d=outd,e=oute,f=outf,g=outg,h=outh,sel=address[3..5],out=out);
 }
