@@ -16,5 +16,11 @@ CHIP PC {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    
+    // need to conditionally set register to either feedback or result of all ops
+    Inc16(in=feedback,out=incout);
+    Mux16(a=feedback,b=incout,sel=inc,out=mux1);
+    Mux16(a=mux1,b=in,sel=load,out=mux2);
+    Mux16(a=mux2,b=false,sel=reset,out=mux3);
+    Register(in=mux3,load=true,out=feedback,out=out);
 }
