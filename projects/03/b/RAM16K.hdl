@@ -16,4 +16,38 @@ CHIP RAM16K {
 
     PARTS:
     // Put your code here:
+    Xor(a=address[13],b=false,out=xa1);
+    Xor(a=address[12],b=false,out=xa2);
+    Not(in=xa1,out=na1);
+    Not(in=xa2,out=na2);
+    And(a=na1,b=na2,out=sela);
+    And(a=load,b=sela,out=loada);
+
+    Xor(a=address[13],b=false,out=xb1);
+    Xor(a=address[12],b=true,out=xb2);
+    Not(in=xb1,out=nb1);
+    Not(in=xb2,out=nb2);
+    And(a=nb1,b=nb2,out=selb);
+    And(a=load,b=selb,out=loadb);
+
+    Xor(a=address[13],b=true,out=xc1);
+    Xor(a=address[12],b=false,out=xc2);
+    Not(in=xc1,out=nc1);
+    Not(in=xc2,out=nc2);
+    And(a=nc1,b=nc2,out=selc);
+    And(a=load,b=selc,out=loadc);
+
+    Xor(a=address[13],b=true,out=xd1);
+    Xor(a=address[12],b=true,out=xd2);
+    Not(in=xd1,out=nd1);
+    Not(in=xd2,out=nd2);
+    And(a=nd1,b=nd2,out=seld);
+    And(a=load,b=seld,out=loadd);
+
+    RAM4K(in=in, load=loada, address=address[0..11], out=outa);
+    RAM4K(in=in, load=loadb, address=address[0..11], out=outb);
+    RAM4K(in=in, load=loadc, address=address[0..11], out=outc);
+    RAM4K(in=in, load=loadd, address=address[0..11], out=outd);
+    Mux4Way16(a=outa,b=outb,c=outc,d=outd,sel=address[12..13],out=out);
+
 }
